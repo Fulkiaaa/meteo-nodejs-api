@@ -56,7 +56,14 @@
                 // Formater les données
                 let formattedData = "<ul>";
                 data.hourly.time.forEach((time, index) => {
-                    formattedData += `<li>Time: ${time}, Temperature: ${data.hourly.temperature_2m[index]}, Wind Speed: ${data.hourly.wind_speed_10m[index]}, Wind Direction: ${data.hourly.wind_direction_10m[index]}, Wind Gusts: ${data.hourly.wind_gusts_10m[index]}</li>`;
+                    formattedData += `<li>
+                        Time: ${time}, 
+                        Temperature: ${data.hourly.temperature_2m[index]}, 
+                        Wind Speed: ${data.hourly.wind_speed_10m[index]}, 
+                        Wind Direction: ${data.hourly.wind_direction_10m[index]}, 
+                        Wind Gusts: ${data.hourly.wind_gusts_10m[index]},
+                        Beaufort: ${data.hourly.beaufort_scale[index]}
+                        </li>`;
                 });
                 formattedData += "</ul>";
 
