@@ -1,52 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-    <style>
-        /* Style pour le conteneur des données météorologiques */
-        #weatherData {
-            font-family: Arial, sans-serif;
-            margin-top: 20px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        /* Style pour chaque élément de la liste */
-        #weatherData ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        #weatherData ul li {
-            margin-bottom: 10px;
-        }
-
-        /* Style pour chaque élément de la liste */
-        #weatherData ul li {
-            padding: 5px;
-            background-color: #f9f9f9;
-            border-radius: 3px;
-        }
-
-        /* Style pour le titre de chaque élément de la liste */
-        #weatherData ul li h3 {
-            margin-top: 0;
-            margin-bottom: 5px;
-            font-size: 16px;
-        }
-
-        /* Style pour les données météorologiques */
-        #weatherData ul li p {
-            margin-top: 0;
-            margin-bottom: 0;
-        }
-    </style>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather Data</title>
+    <style>
+        /* Styles pour le tableau */
+        #weatherTable {
+            font-family: Arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        
+        #weatherTable th, #weatherTable td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        #weatherTable th {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
 <body>
-    <div id="weatherData"></div>
+    <table id="weatherTable">
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>Temperature</th>
+                <th>Wind Speed</th>
+                <th>Wind Direction</th>
+                <th>Wind Gusts</th>
+                <th>Beaufort</th>
+            </tr>
+        </thead>
+        <tbody id="weatherData">
+        </tbody>
+    </table>
 
     <script>
         // Faire une requête HTTP vers votre serveur pour récupérer les données
@@ -54,20 +45,19 @@
             .then(response => response.json())
             .then(data => {
                 // Formater les données
-                let formattedData = "<ul>";
+                let formattedData = "";
                 data.hourly.time.forEach((time, index) => {
-                    formattedData += `<li>
-                        Time: ${time}, 
-                        Temperature: ${data.hourly.temperature_2m[index]}, 
-                        Wind Speed: ${data.hourly.wind_speed_10m[index]}, 
-                        Wind Direction: ${data.hourly.wind_direction_10m[index]}, 
-                        Wind Gusts: ${data.hourly.wind_gusts_10m[index]},
-                        Beaufort: ${data.hourly.beaufort_scale[index]}
-                        </li>`;
+                    formattedData += `<tr>
+                        <td>${time}</td>
+                        <td>${data.hourly.temperature_2m[index]}</td>
+                        <td>${data.hourly.wind_speed_10m[index]}</td>
+                        <td>${data.hourly.wind_direction_10m[index]}</td>
+                        <td>${data.hourly.wind_gusts_10m[index]}</td>
+                        <td>${data.hourly.beaufort_scale[index]}</td>
+                    </tr>`;
                 });
-                formattedData += "</ul>";
 
-                // Afficher les données dans la page HTML
+                // Afficher les données dans le tableau
                 document.getElementById('weatherData').innerHTML = formattedData;
             })
             .catch(error => console.error('Error fetching data:', error));
