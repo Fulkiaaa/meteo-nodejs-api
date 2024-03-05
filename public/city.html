@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Obtenir les coordonnées GPS d'une ville</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        #cityForm {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #cityInput {
+            padding: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 8px 16px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #result {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        p {
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Obtenir les coordonnées GPS d'une ville</h1>
+    <form id="cityForm">
+        <label for="cityInput">Entrez le nom de la ville :</label>
+        <input type="text" id="cityInput" name="cityInput">
+        <button type="submit">Rechercher</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('cityForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const city = document.getElementById('cityInput').value;
+            const url = `https://nominatim.openstreetmap.org/search?city=${encodeURIComponent(city)}&limit=1&format=json`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        const latitude = data[0].lat;
+                        const longitude = data[0].lon;
+                        document.getElementById('result').innerHTML = `<p>Coordonnées GPS de ${city} : Latitude ${latitude}, Longitude ${longitude}</p>`;
+                    } else {
+                        document.getElementById('result').innerHTML = `<p>Aucune coordonnée GPS trouvée pour ${city}</p>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    document.getElementById('result').innerHTML = `<p>Une erreur s'est produite lors de la recherche de coordonnées pour ${city}</p>`;
+                });
+        });
+    </script>
+</body>
+</html>

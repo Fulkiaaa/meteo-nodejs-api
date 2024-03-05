@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Météo</title>
+</head>
+<body>
+    <h1>Météo</h1>
+    <form id="cityForm">
+        <label for="cityInput">Entrez le nom de la ville :</label>
+        <input type="text" id="cityInput" name="cityInput">
+        <button type="submit">Rechercher</button>
+    </form>
+
+    <div id="weatherData"></div>
+
+    <script>
+        document.getElementById('cityForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const city = document.getElementById('cityInput').value;
+            const nominatimUrl = `https://nominatim.openstreetmap.org/search?city=${encodeURIComponent(city)}&limit=1&format=json`;
+
+            fetch(nominatimUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        const latitude = data[0].lat;
+                        const longitude = data[0].lon;
+                        const weatherUrl = `http://localhost:3000?latitude=${latitude}&longitude=${longitude}`;
+
+                        fetch(weatherUrl)
+                            .then(response => response.json())
+                            .then(weatherData => {
+                                // Affichage des données météorologiques
+                                document.getElementById('weatherData').innerHTML = `
+                                    <h2>Météo à ${city}</h2>
+                                    <p>Température : ${weatherData.current.temperature}</p>
+                                    <p>Vitesse du vent : ${weatherData.current.wind_speed}</p>
+                                    <p>Direction du vent : ${weatherData.current.wind_direction}</p>
+                                    <p>Précipitations : ${weatherData.current.precipitation}</p>
+                                    <p>Humidité : ${weatherData.current.humidity}</p>
+                                `;
+                            })
+                            .catch(error => console.error('Error fetching weather data:', error));
+                    } else {
+                        document.getElementById('weatherData').innerHTML = `<p>Aucune coordonnée GPS trouvée pour ${city}</p>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    document.getElementById('weatherData').innerHTML = `<p>Une erreur s'est produite lors de la recherche de données météorologiques pour ${city}</p>`;
+                });
+        });
+    </script>
+</body>
+</html>
