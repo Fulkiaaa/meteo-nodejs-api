@@ -116,19 +116,73 @@
                             fetch(weatherUrl)
                                 .then(response => response.json())
                                 .then(data => {
-                                    // Formater les données
-                                    let formattedData = "";
-                                    const numHoursToShow = 24; // Nombre d'heures à afficher 
-                                    for (let i = 0; i < numHoursToShow; i++) {
-                                        formattedData += `<tr>
-                                            <td>${data.hourly.time[i]}</td>
-                                            <td>${data.hourly.temperature_2m[i]}</td>
-                                            <td>${data.hourly.wind_speed_10m[i]}</td>
-                                            <td>${data.hourly.wind_direction_10m[i]}</td>
-                                            <td>${data.hourly.wind_gusts_10m[i]}</td>
-                                            <td>${data.hourly.beaufort_scale[i]}</td>
-                                        </tr>`;
+                                function degreesToCardinal(degrees) {
+                                    if (degrees >= 337.5 || degrees < 22.5) {
+                                        return "N";
+                                    } else if (degrees >= 22.5 && degrees < 67.5) {
+                                        return "NE";
+                                    } else if (degrees >= 67.5 && degrees < 112.5) {
+                                        return "E";
+                                    } else if (degrees >= 112.5 && degrees < 157.5) {
+                                        return "SE";
+                                    } else if (degrees >= 157.5 && degrees < 202.5) {
+                                        return "S";
+                                    } else if (degrees >= 202.5 && degrees < 247.5) {
+                                        return "SW";
+                                    } else if (degrees >= 247.5 && degrees < 292.5) {
+                                        return "W";
+                                    } else {
+                                        return "NW";
                                     }
+                                }
+
+                                // Formater les données
+                                let formattedData = "";
+                                const numHoursToShow = 24; // Nombre d'heures à afficher 
+                                for (let i = 0; i < numHoursToShow; i++) {
+                                    // Convertir les degrés de direction du vent en direction cardinale
+                                    const windDirectionCardinal = degreesToCardinal(data.hourly.wind_direction_10m[i]);
+
+                                    // Convertir la direction cardinale en symboles Unicode
+                                    let windDirectionArrow = "";
+                                    switch (windDirectionCardinal) {
+                                        case "N":
+                                            windDirectionArrow = "↑";
+                                            break;
+                                        case "NE":
+                                            windDirectionArrow = "↗";
+                                            break;
+                                        case "E":
+                                            windDirectionArrow = "→";
+                                            break;
+                                        case "SE":
+                                            windDirectionArrow = "↘";
+                                            break;
+                                        case "S":
+                                            windDirectionArrow = "↓";
+                                            break;
+                                        case "SW":
+                                            windDirectionArrow = "↙";
+                                            break;
+                                        case "W":
+                                            windDirectionArrow = "←";
+                                            break;
+                                        case "NW":
+                                            windDirectionArrow = "↖";
+                                            break;
+                                        default:
+                                            windDirectionArrow = "?";
+                                    }
+
+                                    formattedData += `<tr>
+                                        <td>${data.hourly.time[i]}</td>
+                                        <td>${data.hourly.temperature_2m[i]}</td>
+                                        <td>${data.hourly.wind_speed_10m[i]}</td>
+                                        <td>${windDirectionArrow}</td>
+                                        <td>${data.hourly.wind_gusts_10m[i]}</td>
+                                        <td>${data.hourly.beaufort_scale[i]}</td>
+                                    </tr>`;
+                                }
 
                                     // Afficher les données dans le tableau
                                     document.getElementById('weatherData').innerHTML = formattedData;
