@@ -1,5 +1,7 @@
 var http = require('http');
 var https = require('https');
+const url = require('url');
+
 const PORT = process.env.PORT || 3000;
 
 // Fonction pour calculer la force du vent en beauforts
@@ -35,10 +37,16 @@ function calculateBeaufort(windSpeed) {
 }
 
 var httpServer = http.createServer(function(request, response) {
+    // Récupérer le chemin de l'URL
+    const requestUrl = url.parse(request.url, true);
+    
+    // Récupérer la latitude et la longitude de la ville
+    const latitude = requestUrl.query.latitude;
+    const longitude = requestUrl.query.longitude;
 
     // Faire une requête à l'API externe
     function getData(callback){
-        var apiRequest = https.request('https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&hourly=temperature_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m&timezone=Europe%2FBerlin', function(apiResponse) {
+        var apiRequest = https.request(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m&timezone=Europe%2FBerlin`, function(apiResponse) {
             var data = '';
             apiResponse.on('data', function(chunk) {
                 data += chunk;
@@ -79,6 +87,7 @@ var httpServer = http.createServer(function(request, response) {
         response.end();
     });
 });
+
 
 // Écoute du serveur HTTP
 httpServer.listen(PORT, () => {
