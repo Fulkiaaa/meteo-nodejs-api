@@ -174,8 +174,14 @@
                                             windDirectionArrow = "?";
                                     }
 
+                                    // Convertir la chaîne de date en objet Date
+                                    const date = new Date(data.hourly.time[i]);
+                                     // Extraire l'heure au format HH:MM
+                                    const formattedTime = `${("0" + date.getHours()).slice(-2)}:${("0" + date.getMinutes()).slice(-2)}`;
+
+
                                     formattedData += `<tr>
-                                        <td>${data.hourly.time[i]}</td>
+                                        <td>${formattedTime}</td>
                                         <td>${data.hourly.temperature_2m[i]}</td>
                                         <td>${data.hourly.wind_speed_10m[i]}</td>
                                         <td>${windDirectionArrow}</td>
